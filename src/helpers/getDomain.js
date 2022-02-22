@@ -7,7 +7,7 @@ import { isProduction } from 'helpers/isProduction';
  * @returns {string}
  */
 export const getDomain = () => {
-  const prodUrl = 'https://sopra-fs22-admingroup-server.herokuapp.com'; // TODO: insert your groups heroku prod url for server (once deployed)
+  const prodUrl = process.env.REACT_APP_API_URL;
   const devUrl = 'http://localhost:8080';
 
   return isProduction() ? prodUrl : devUrl;
