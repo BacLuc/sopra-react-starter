@@ -7,7 +7,7 @@ import { isProduction } from 'helpers/isProduction';
  * @returns {string}
  */
 export const getDomain = () => {
-  const prodUrl = process.env.REACT_APP_API_URL;
+  const prodUrl = 'sopra-fs22-bachmann-lucius-cli.herokuapp.com';
   const devUrl = 'http://localhost:8080';
 
   return isProduction() ? prodUrl : devUrl;
