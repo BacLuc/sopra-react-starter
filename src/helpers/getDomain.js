@@ -7,7 +7,7 @@ import { isProduction } from 'helpers/isProduction';
  * @returns {string}
  */
 export const getDomain = () => {
-  const prodUrl = 'http://sopra-fs22-bachmann-lucius-ser.herokuapp.com';
+  const prodUrl = 'https://sopra-fs22-bachmann-lucius-ser.herokuapp.com';
   const devUrl = 'http://localhost:8080';
 
   return isProduction() ? prodUrl : devUrl;
