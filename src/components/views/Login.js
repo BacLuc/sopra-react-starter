@@ -43,14 +43,13 @@ FormField.defaultProps = {
 
 const Register = props => {
   const history = useHistory();
-  const [name, setName] = useState(null);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
 
-  const register = async () => {
+  const doLogin = async () => {
     try {
-      const requestBody = JSON.stringify({username, name, password});
-      const response = await api.post('/users', requestBody);
+      const requestBody = JSON.stringify({username, password});
+      const response = await api.post('/login', requestBody);
 
       // Get the returned user and update a new object.
       const user = new User(response.data);
@@ -65,6 +64,10 @@ const Register = props => {
     }
   };
 
+  const goToRegister = () => {
+    history.push("/register")
+  }
+
   return (
     <BaseContainer>
       <div className="login container">
@@ -75,11 +78,6 @@ const Register = props => {
             onChange={un => setUsername(un)}
           />
           <FormField
-            label="Name"
-            value={name}
-            onChange={n => setName(n)}
-          />
-          <FormField
               label={"Password"}
               value={password}
               onChange={p => setPassword(p)}
@@ -87,9 +85,17 @@ const Register = props => {
           />
           <div className="login button-container">
             <Button
-              disabled={!username || !name}
+              disabled={!username || !password}
               width="100%"
-              onClick={() => register()}
+              onClick={() => doLogin()}
+            >
+              Login
+            </Button>
+          </div>
+          <div className="login button-container">
+            <Button
+                width="100%"
+                onClick={() => goToRegister()}
             >
               Register
             </Button>
