@@ -6,6 +6,7 @@ import {Button} from "components/ui/Button";
 import {Spinner} from "components/ui/Spinner";
 import {api, handleError} from "helpers/api";
 import {useHistory, useParams} from "react-router-dom";
+import axios from "axios";
 
 
 
@@ -18,16 +19,28 @@ const Profile = () => {
 
     let content = <Spinner/>
 
-    const fetchProfile = async (userId) =>  {
+    const fetchProfile = async (userId, cancelTokenSource) =>  {
         try {
-            const response = await api.get(`/users/${userId}`);
+            const response = await api.get(
+                `/users/${userId}`,
+                {
+                    cancelToken: cancelTokenSource.token
+                });
             setUser(new User(response.data));
         } catch (e) {
+            if (axios.isCancel(e)) {
+                return;
+            }
             setError(handleError(e));
         }
     }
 
-    useEffect(() => { fetchProfile(profileId) });
+    useEffect(() => {
+        const cancelToken = axios.CancelToken;
+        const cancelTokenSource = cancelToken.source();
+        fetchProfile(profileId, cancelTokenSource);
+        return () => cancelTokenSource.cancel()
+    }, []);
 
     if (error) {
         content = <div>Error fetching user, reason: {error}</div>
