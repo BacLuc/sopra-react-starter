@@ -7,13 +7,20 @@ import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 import "styles/views/Game.scss";
 
-const Player = ({user}) => (
-  <div className="player container">
-    <div className="player username">{user.username}</div>
-    <div className="player name">{user.name}</div>
-    <div className="player id">id: {user.id}</div>
-  </div>
-);
+const Player = ({user}) => {
+  const history = useHistory();
+
+  const goToUser = userId => { history.push(`/profile/${userId}`)}
+
+    return <div className="player container">
+        <div className="player username"
+             onClick={() => goToUser(user.id)}>
+            {user.username}
+        </div>
+        <div className="player name">{user.name}</div>
+        <div className="player id">id: {user.id}</div>
+    </div>
+};
 
 Player.propTypes = {
   user: PropTypes.object
