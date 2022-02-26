@@ -7,22 +7,77 @@ import {Spinner} from "components/ui/Spinner";
 import {api, handleError} from "helpers/api";
 import {useHistory, useParams} from "react-router-dom";
 import axios from "axios";
+import useToken from "helpers/token";
+import PropTypes from "prop-types";
+
+import 'styles/views/Profile.scss'
 
 
+const SaveOrEditButton = (props) => {
+    if(!props.show) {
+        return '';
+    }
+    const onClick = () => {
+        if(props.inEditMode) {
+            return props.onSave();
+        }
+        return props.onEdit();
+    }
+    const text = props.inEditMode ? "Save" : "Edit";
+    return <Button
+        width="100%"
+        onClick={onClick}
+    >
+        {text}
+    </Button>
+}
+
+SaveOrEditButton.propTypes = {
+    show: PropTypes.bool,
+    inEditMode: PropTypes.bool,
+    onEdit: PropTypes.func,
+    onSave: PropTypes.func
+}
 
 const Profile = () => {
     const history = useHistory();
     const { profileId } = useParams();
+    const token = useToken();
 
     const [ user, setUser ] = useState(null);
     const [ error, setError ] = useState(null);
+    const [ editMode, setEditMode ] = useState(false);
 
-    let content = <Spinner/>
+    const editable = user && `${user?.id}` === token?.sub;
 
-    const fetchProfile = async (userId, cancelTokenSource) =>  {
+    const updateUsername = name => {
+        setUser(new User({
+            ...user,
+            username: name
+        }))
+    }
+
+    const updateBirthday = birthday => {
+        setUser(new User({
+            ...user,
+            birthday: birthday
+        }))
+    }
+
+    const saveUser = async () => {
+      const {username, birthday} = user;
+      try {
+          await api.put(`/users/${profileId}`, {username, birthday});
+          setEditMode(false);
+      } catch (e) {
+          setError(handleError(error));
+      }
+    }
+
+    const fetchProfile = async (cancelTokenSource) =>  {
         try {
             const response = await api.get(
-                `/users/${userId}`,
+                `/users/${profileId}`,
                 {
                     cancelToken: cancelTokenSource.token
                 });
@@ -38,27 +93,42 @@ const Profile = () => {
     useEffect(() => {
         const cancelToken = axios.CancelToken;
         const cancelTokenSource = cancelToken.source();
-        fetchProfile(profileId, cancelTokenSource);
+        fetchProfile(cancelTokenSource);
         return () => cancelTokenSource.cancel()
     }, []);
 
+    const content = [];
+
+    if (!user) {
+        content.push(<Spinner key={'spinner'}/>);
+    }
+
     if (error) {
-        content = <div>Error fetching user, reason: {error}</div>
-    } else if (user) {
-        content = <div>
+        content.push(<div key={'error'}>Error, reason: {error}</div>);
+    }
+    if (user) {
+        content.push(<div key={'form'}>
             <h1>Profile of user {user.name}, status: {user.status}</h1>
             <FormField
                 label="Username"
                 value={user.username}
-                disabled={true}
+                disabled={!editMode}
+                onChange={updateUsername}
             />
             <FormField
                 label={"birthday"}
-                value={"2022-02-03"}
+                value={user.birthday ?? ''}
                 type={"date"}
-                disabled={true}
+                disabled={!editMode}
+                onChange={updateBirthday}
             />
-        </div>
+            <SaveOrEditButton
+                show={editable}
+                inEditMode={editMode}
+                onEdit={() => {setEditMode(true)}}
+                onSave={saveUser}
+            />
+        </div>);
     }
 
     return <BaseContainer>
