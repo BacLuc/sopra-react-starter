@@ -74,28 +74,27 @@ const Profile = () => {
       }
     }
 
-    const fetchProfile = async (cancelTokenSource) =>  {
-        try {
-            const response = await api.get(
-                `/users/${profileId}`,
-                {
-                    cancelToken: cancelTokenSource.token
-                });
-            setUser(new User(response.data));
-        } catch (e) {
-            if (axios.isCancel(e)) {
-                return;
-            }
-            setError(handleError(e));
-        }
-    }
-
     useEffect(() => {
+        const fetchProfile = async (cancelTokenSource) =>  {
+            try {
+                const response = await api.get(
+                    `/users/${profileId}`,
+                    {
+                        cancelToken: cancelTokenSource.token
+                    });
+                setUser(new User(response.data));
+            } catch (e) {
+                if (axios.isCancel(e)) {
+                    return;
+                }
+                setError(handleError(e));
+            }
+        }
         const cancelToken = axios.CancelToken;
         const cancelTokenSource = cancelToken.source();
         fetchProfile(cancelTokenSource);
         return () => cancelTokenSource.cancel()
-    }, []);
+    }, [profileId]);
 
     const content = [];
 
