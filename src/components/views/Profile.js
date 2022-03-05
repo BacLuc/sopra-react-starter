@@ -107,7 +107,7 @@ const Profile = () => {
     }
     if (user) {
         content.push(<div key={'form'}>
-            <h1>Profile of user {user.name}, status: {user.status}</h1>
+            <h1>Profile of user {user.name}, online: {user.logged_in ? 'yes' : 'no'}</h1>
             <FormField
                 label="Username"
                 value={user.username}

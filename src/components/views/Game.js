@@ -37,7 +37,8 @@ const Game = () => {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
 
-  const logout = () => {
+  const logout = async () => {
+    await api.post("/logout");
     localStorage.removeItem('token');
     history.push('/login');
   }
