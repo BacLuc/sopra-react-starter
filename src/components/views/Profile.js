@@ -120,6 +120,11 @@ const Profile = () => {
                 disabled={!editMode}
                 onChange={updateBirthday}
             />
+            <FormField
+                label={"creation date"}
+                value={user.creation_date ?? ''}
+                disabled={true}
+            />
             <SaveOrEditButton
                 show={editable}
                 inEditMode={editMode}
