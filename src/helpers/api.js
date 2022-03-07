@@ -1,13 +1,27 @@
 import axios from 'axios';
 import { getDomain } from 'helpers/getDomain';
 
-export const api = axios.create({
-  baseURL: getDomain(),
-  headers: { 'Content-Type': 'application/json' },
-  withCredentials: true
-});
+const emptyAccess = {
+  token: null,
+  userId: null
+};
+let currentAccess = {...emptyAccess};
 
-export const handleError = error => {
+const api = () => {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (currentAccess.token) {
+    headers['Authorization'] = "Bearer " + currentAccess.token;
+  }
+  return axios.create({
+    baseURL: getDomain(),
+    headers: headers,
+    withCredentials: true
+  });
+}
+
+const handleError = error => {
   const response = error.response;
 
   // catch 4xx and 5xx status codes
@@ -34,3 +48,23 @@ export const handleError = error => {
     return error.message;
   }
 };
+
+const login = async (username, password) => {
+  const requestBody = JSON.stringify({username, password});
+  const response = await api().post('/login', requestBody);
+  currentAccess = {
+    token: response.data.access_token,
+    userId: response.data.userId
+  }
+}
+
+const getUserId = () => {
+  return currentAccess.userId;
+}
+
+const logout = async () => {
+  await api().post("/logout");
+  currentAccess = {...emptyAccess}
+}
+
+export {api, login, getUserId, logout, handleError}

@@ -4,21 +4,20 @@ import React, {useEffect, useState} from "react";
 import User from "models/User";
 import {Button} from "components/ui/Button";
 import {Spinner} from "components/ui/Spinner";
-import {api, handleError} from "helpers/api";
+import {api, getUserId, handleError} from "helpers/api";
 import {useHistory, useParams} from "react-router-dom";
 import axios from "axios";
-import useToken from "helpers/token";
 import PropTypes from "prop-types";
 
 import 'styles/views/Profile.scss'
 
 
 const SaveOrEditButton = (props) => {
-    if(!props.show) {
+    if (!props.show) {
         return '';
     }
     const onClick = () => {
-        if(props.inEditMode) {
+        if (props.inEditMode) {
             return props.onSave();
         }
         return props.onEdit();
@@ -42,13 +41,13 @@ SaveOrEditButton.propTypes = {
 const Profile = () => {
     const history = useHistory();
     const { profileId } = useParams();
-    const token = useToken();
+    const userId = getUserId()
 
     const [ user, setUser ] = useState(null);
     const [ error, setError ] = useState(null);
     const [ editMode, setEditMode ] = useState(false);
 
-    const editable = user && `${user?.id}` === token?.sub;
+    const editable = user && user?.id === userId;
 
     const updateUsername = name => {
         setUser(new User({
@@ -67,7 +66,7 @@ const Profile = () => {
     const saveUser = async () => {
       const {username, birthday} = user;
       try {
-          await api.put(`/users/${profileId}`, {username, birthday});
+          await api().put(`/users/${profileId}`, {username, birthday});
           setEditMode(false);
       } catch (e) {
           setError(handleError(error));
@@ -77,7 +76,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchProfile = async (cancelTokenSource) =>  {
             try {
-                const response = await api.get(
+                const response = await api().get(
                     `/users/${profileId}`,
                     {
                         cancelToken: cancelTokenSource.token

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {api, handleError} from 'helpers/api';
-import User from 'models/User';
+import {handleError, login} from 'helpers/api';
 import {useHistory} from 'react-router-dom';
 import {Button} from 'components/ui/Button';
 import 'styles/views/Login.scss';
@@ -14,16 +13,7 @@ const Register = props => {
 
   const doLogin = async () => {
     try {
-      const requestBody = JSON.stringify({username, password});
-      const response = await api.post('/login', requestBody);
-
-      // Get the returned user and update a new object.
-      const user = new User(response.data);
-
-      // Store the token into the local storage.
-      localStorage.setItem('token', user.token);
-
-      // Register successfully worked --> navigate to the route /game in the GameRouter
+      await login(username, password);
       history.push(`/game`);
     } catch (error) {
       alert(`Something went wrong during the login: \n${handleError(error)}`);

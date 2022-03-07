@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {api, handleError} from 'helpers/api';
+import {api, handleError, logout} from 'helpers/api';
 import {Spinner} from 'components/ui/Spinner';
 import {Button} from 'components/ui/Button';
 import {useHistory} from 'react-router-dom';
@@ -37,9 +37,8 @@ const Game = () => {
   // more information can be found under https://reactjs.org/docs/hooks-state.html
   const [users, setUsers] = useState(null);
 
-  const logout = async () => {
-    await api.post("/logout");
-    localStorage.removeItem('token');
+  const doLogout = async () => {
+    await logout();
     history.push('/login');
   }
 
@@ -51,7 +50,7 @@ const Game = () => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchData() {
       try {
-        const response = await api.get('/users');
+        const response = await api().get('/users');
 
         // delays continuous execution of an async operation for 1 second.
         // This is just a fake async call, so that the spinner can be displayed
@@ -73,14 +72,13 @@ const Game = () => {
       } catch (error) {
         console.error(`Something went wrong while fetching the users: \n${handleError(error)}`);
         console.error("Details:", error);
-        localStorage.removeItem('token');
         alert("Something went wrong while fetching the users! See the console for details.");
         history.push('/login');
       }
     }
 
     fetchData();
-  }, []);
+  }, [history]);
 
   let content = <Spinner/>;
 
@@ -94,7 +92,7 @@ const Game = () => {
         </ul>
         <Button
           width="100%"
-          onClick={() => logout()}
+          onClick={() => doLogout()}
         >
           Logout
         </Button>
