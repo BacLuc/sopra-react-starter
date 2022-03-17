@@ -1,5 +1,13 @@
 # SoPra FS22 - Client Template
 
+## SonarCloud Badges:
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=BacLuc_sopra-react-starter&metric=bugs)](https://sonarcloud.io/summary/new_code?id=BacLuc_sopra-react-starter)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=BacLuc_sopra-react-starter&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=BacLuc_sopra-react-starter)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=BacLuc_sopra-react-starter&metric=coverage)](https://sonarcloud.io/summary/new_code?id=BacLuc_sopra-react-starter)
+[![Alert Status](https://sonarcloud.io/api/project_badges/measure?project=BacLuc_sopra-react-starter&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=BacLuc_sopra-react-starter)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=BacLuc_sopra-react-starter&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=BacLuc_sopra-react-starter)
+
 ## Getting started
 
 Read and go through these Tutorials. It will make your life easier!
